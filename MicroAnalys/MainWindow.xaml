@@ -1,0 +1,90 @@
+﻿<Window x:Class="MicroAnalys.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MicroAnalys"
+        xmlns:oxy="http://oxyplot.org/wpf"
+        mc:Ignorable="d"
+        Title="Поиск сфер" Height="1000" Width="800" Closing="Window_Closing">
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1" Margin="0,10,10,0">
+            <Button Click="LoadImage" Content="Загрузить изображение" Height="25" Margin="0,0,0,10"/>
+
+            <TextBlock Margin="10,0,0,0">Масштаб</TextBlock>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBox TextAlignment="Justify" Padding="5" Grid.Column="0" HorizontalAlignment="Stretch" Text="{Binding Scale}"/>
+                <ComboBox SelectedIndex="0" SelectedItem="{Binding Exp}" ItemsSource="{Binding PrefixData}" DisplayMemberPath="Key" SelectedValuePath="Value" Grid.Column="1" x:Name="prefixList" Height="30" HorizontalAlignment="Stretch" />
+            </Grid>
+            <TextBlock Margin="10,5,0,0"><Run Language="ru-ru" Text="Порог 1"/><Run Text=":"/></TextBlock>
+            <TextBox TextAlignment="Justify" Margin="0,0,0,0" Padding="5" Grid.Column="0" HorizontalAlignment="Stretch" Text="{Binding Param1}"/>
+            <TextBlock Margin="10,5,0,0"><Run Language="ru-ru" Text="Порог 2"/><Run Text=":"/></TextBlock>
+            <TextBox TextAlignment="Justify" Margin="0,0,0,0" Padding="5" Grid.Column="0" HorizontalAlignment="Stretch" Text="{Binding Param2}"/>
+
+            <TextBlock Margin="10,5,0,0"><Run Language="ru-ru" Text="Минимальная дист. между"/><Run Text=":"/></TextBlock>
+            <TextBox TextAlignment="Justify" Margin="0,0,0,0" Padding="5" Grid.Column="0" HorizontalAlignment="Stretch" Text="{Binding MinDistance}"/>
+
+            <TextBlock Margin="10,5,0,0"><Run Language="ru-ru" Text="Разброс радиуса ±"/><Run Text=":"/></TextBlock>
+            <TextBox TextAlignment="Justify" Margin="0,0,0,0" Padding="5" Grid.Column="0" HorizontalAlignment="Stretch" Text="{Binding Offset}"/>
+
+            <CheckBox x:Name="checkBox1" IsThreeState="False" Margin="0,20,0,0" Height="20" Content="Скрыть разметку" IsChecked="{Binding DontShowAnalys, TargetNullValue=false}" Click="checkBox1_Click" />
+
+            <TextBlock Margin="10,5,0,0"><Run Language="ru-ru" Text="Цена одного деления на гр."/><Run Text=":"/></TextBlock>
+            <TextBox TextAlignment="Justify" Margin="0,0,0,0" Padding="5" Grid.Column="0" HorizontalAlignment="Stretch" Text="{Binding GraphSize}"/>
+            <Button Content="Проветси анализ" Height="25" Margin="0,5,0,10" Click="DoAnalys"/>
+            <Button Content="Создать сферу нового цвета" Height="25" Margin="0,0,0,10" Click="CreateSphere"/>
+            <Button Content="Создать ещё сферу" Height="25" Margin="0,0,0,10" Click="CreateSphereWithoutColorChange"/>
+
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="6*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Content="Найти сферы" Height="25" Click="SearchSpheres"/>
+                <Button x:Name="SphereColor" BorderThickness="1" Height="25" Background="PeachPuff" Grid.Column="1"/>
+            </Grid>
+            
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="6*"></ColumnDefinition>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Button Content="Удалить сферы" Height="25" Click="RemoveLastSphere"/>
+                <Button x:Name="SphereColor2" BorderThickness="1" Height="25" Background="PeachPuff" Grid.Column="1"/>
+            </Grid>
+            <Button Content="Удалить все сферы" Height="25" Margin="0,0,0,10" Click="RemoveAllSpheres"/>
+            <Button Command="{Binding selectScaleClick}" Content="Выбрать полосу масштаба" Height="25" Margin="0,0,0,0"/>
+            <StackPanel Orientation="Horizontal">
+                <Label>Пиксельный масштаб</Label>
+                <Label Content="{Binding ScaleWindow.result}" x:Name="lbScale"></Label>
+            </StackPanel>
+        </StackPanel>
+        <TabControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+            <TabItem Header="Общее распределение">
+                <oxy:PlotView Model="{Binding MyModel}"/>
+            </TabItem>
+            <!-- <TabItem Header="Распределение по цветам">
+                <oxy:PlotView Model="{Binding MyModel2}"/>
+            </TabItem> -->
+        </TabControl>
+        <Image Source="{Binding imgBox, Mode=TwoWay}" x:Name="imgBox" Stretch="Uniform" HorizontalAlignment="Left" Margin="5" Grid.Column="0" Grid.Row="0"/>
+        <InkCanvas Margin="5" Background="Transparent" x:Name="canvass" EditingMode="Select">
+            <!-- <Ellipse Stretch="Fill" Width="100" Height="100" StrokeThickness="4" Fill="Transparent" Stroke="AntiqueWhite" /> -->
+        </InkCanvas>
+    </Grid>
+</Window>
